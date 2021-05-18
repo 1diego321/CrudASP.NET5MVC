@@ -23,14 +23,14 @@ namespace AzureImageStorage.Setups
 {
     public static class Dependencies
     {
-        public static void SetDependencies(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
+        public static void SetDependencies(this IServiceCollection services, IConfiguration configuration, bool IsDevelopment)
         {
             //ConnectionStrings
-            string SqlConnectionString = env.IsDevelopment() 
+            string SqlConnectionString = IsDevelopment 
                 ? configuration.GetConnectionString("DevSql") 
                 : configuration.GetConnectionString("ProdSql");
             
-            string AzureBlobConnectionString = env.IsDevelopment()
+            string AzureBlobConnectionString = IsDevelopment
                 ? configuration.GetConnectionString("DevAzureBlobStorage")
                 : configuration.GetConnectionString("ProdAzureBlobStorage");
 
