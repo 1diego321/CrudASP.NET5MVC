@@ -1,0 +1,37 @@
+﻿@model IEnumerable<AzureImageStorage.BLL.Models.ViewModels.ApplicationUser.ApplicationUserViewModel>
+<table class="table table-hover table-bordered" id="tblUsuarios">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th style="width:60%">Nombre Completo</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td style="width:60%">@user.FullName</td>
+                    <td>
+                        <img src='@Url.Action("GetImage",new { n = user.ImageName })' class="img-fluid rounded" width="100" />
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-info">Editar</a>
+                        <a href="#" class="btn btn-danger" id="btnBorrar">Borrar</a>
+                        <input type="hidden" value="@user.Id" hidden="hidden" />
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4"><p class="text-center text-danger">No hay registros.</p></td>
+            </tr>
+        }
+    </tbody>
+</table>

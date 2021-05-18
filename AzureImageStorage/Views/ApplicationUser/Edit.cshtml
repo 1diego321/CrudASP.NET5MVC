@@ -1,0 +1,57 @@
+﻿@model AzureImageStorage.BLL.Models.ViewModels.ApplicationUser.ApplicationUserEditViewModel
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<br />
+<style>
+    span {
+        font-size: 13px;
+    }
+</style>
+<div class="card">
+    <div class="card-header">
+        <h2>Editar Usuario</h2>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" id="frmUsuario">
+            <fieldset>
+                @Html.HiddenFor(x => x.Id)
+                <div class="form-group mb-1">
+                    <label asp-for="Name" class="form-label mt-4"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Ingresa tu nombre">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    @*<small class="form-text text-muted">Ambos nombres si es que tienes wacho</small>*@
+                </div>
+                <div class="form-group mb-1">
+                    <label asp-for="LastName" class="form-label mt-4"></label>
+                    <input asp-for="LastName" class="form-control" placeholder="Ingresa tus apellidos">
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                    @*<small class="form-text text-muted">Ambos apellidos plox</small>*@
+                </div>
+                <div align="center">
+                    <figure>
+                        <img src='@Url.Action("GetImage",new { n = Model.ImageName })' class="img-fluid rounded" width="300" />
+                        <figcaption>Imagen Actual</figcaption>
+                    </figure>
+                </div>
+                <div class="form-group">
+                    <label class="form-label mt-4">Cargar Nueva Imagen</label> <br />
+                    <input asp-for="Image" class="form-control-file" placeholder="Ingresa @Model.Image">
+                    <br />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                    @*<small class="form-text text-muted">Una imagen para tu perfil</small>*@
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="card-footer">
+        <input class="btn btn-success" type="submit" value="Guardar" form="frmUsuario" />
+        <a asp-action="Index" class="btn btn-info">Volver</a>
+    </div>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+

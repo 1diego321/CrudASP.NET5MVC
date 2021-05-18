@@ -1,0 +1,42 @@
+﻿@using AzureImageStorage.Controllers
+@using AzureImageStorage.BLL.Models.ViewModels.ApplicationUser
+@using AzureImageStorage.BLL.Models.ViewModels.Application
+@using Newtonsoft.Json;
+@using AzureImageStorage.Extensions;
+@model IEnumerable<ApplicationUserViewModel>
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<br />
+@if (TempData["Message"] != null)
+{
+    var oMessage = TempData.GetObject<MessageViewModel>("Message");
+
+    <div class="alert alert-dismissible @oMessage.CssClass">
+        <button type="button" class="btn-close" id="btn-message-close" data-bs-dismiss="alert"></button>
+        <h4 class="alert-heading">Exito!</h4>
+        <p class="mb-0">@Html.Raw(oMessage.Message)</p>
+    </div>
+}
+<br />
+
+<div class="container">
+    <div class="row">
+        <div class="row mb-4">
+            <div class="col-10">
+                <h2>Listado de Usuarios</h2>
+            </div>
+            <div class="col-2" align="right">
+                <a asp-action="Create" class="btn btn-primary">Nuevo</a>
+            </div>
+        </div>
+        @{
+            await Html.RenderPartialAsync("_IndexTablePartial", Model);
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/usuarios.js"></script>
+}
