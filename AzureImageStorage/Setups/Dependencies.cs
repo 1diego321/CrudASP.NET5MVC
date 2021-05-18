@@ -2,13 +2,18 @@
 using AzureImageStorage.BLL.Services;
 using AzureImageStorage.BLL.Services.Abstractions;
 using AzureImageStorage.DAL.Data;
+using AzureImageStorage.DAL.Data.Initializer;
+using AzureImageStorage.DAL.Data.Initializer.Abstractions;
 using AzureImageStorage.DAL.Repositories;
 using AzureImageStorage.DAL.Repositories.Abstractions;
 using AzureImageStorage.DAL.UnitOfWork;
 using AzureImageStorage.DAL.UnitOfWork.Abstractions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +23,25 @@ namespace AzureImageStorage.Setups
 {
     public static class Dependencies
     {
-        public static void SetDependencies(this IServiceCollection services, IConfiguration configuration)
+        public static void SetDependencies(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
+            //ConnectionStrings
+            string SqlConnectionString = env.IsDevelopment() 
+                ? configuration.GetConnectionString("DevSql") 
+                : configuration.GetConnectionString("ProdSql");
+            
+            string AzureBlobConnectionString = env.IsDevelopment()
+                ? configuration.GetConnectionString("DevAzureBlobStorage")
+                : configuration.GetConnectionString("ProdAzureBlobStorage");
+
             //DbContext
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultSQL")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(SqlConnectionString));
+
+            //AzureBlobStorage
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(AzureBlobConnectionString);
+            });
 
             //AutoMapper
             services.AddAutoMapper(typeof(ApplicationMapper));
@@ -35,7 +55,9 @@ namespace AzureImageStorage.Setups
 
             //UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
+
+            //Initializer
+            services.AddScoped<IDbInitializer, DbInitializer>();
         }
     }
 }

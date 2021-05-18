@@ -1,5 +1,5 @@
-using Azure.Storage.Blobs;
 using AzureImageStorage.DAL.Data;
+using AzureImageStorage.DAL.Data.Initializer.Abstractions;
 using AzureImageStorage.Setups;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,22 +26,15 @@ namespace AzureImageStorage
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddControllersWithViews();
 
-            services.SetDependencies(configuration: Configuration);
-
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage"));
-            });
-
-            //services.AddSingleton(new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage")));
+            services.SetDependencies(Configuration, env);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer init)
         {
             if (env.IsDevelopment())
             {
@@ -49,6 +42,7 @@ namespace AzureImageStorage
             }
             else
             {
+                init.Initialize();
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
